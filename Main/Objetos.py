@@ -5,6 +5,7 @@ import csv
 import datetime as dt
 import trimesh
 import numpy as np
+from matplotlib.scale import scale_factory
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import matplotlib.pyplot as plt
 #Clase para el volcan
@@ -20,17 +21,35 @@ class Volcano:
         self.temp_interior = float(temp_interior)
         self.height_msnm = float(height_msnm)
 
-    def plot_obj_on_axes(self,
-            ax,
-            obj_path,
-            rotate_deg=(0, 0, 0),
-            translate=(0, 0, 0),
-            scale=1.0,
-            base_color=np.array([0.2, 0.7, 0.2]),  # verde por defecto
-            alpha=1.0,
-            shading_strength=0.6
-    ):
+    def calculate_scale(self):
+        None
 
+    def plot_obj_on_axes(self,
+                         ax,
+                         obj_path,
+                         rotate_deg=(0, 0, 0),
+                         translate=(0, 0, 0),
+                         scale=None,  # <--- IMPORTANTE: Debe ser None por defecto
+                         base_color=np.array([0.2, 0.7, 0.2]),
+                         alpha=1.0,
+                         shading_strength=0.6
+                         ):
+
+        # 1. Calcular el factor de escala SI el usuario no dio uno específico
+        if scale is None:
+            volcano_model_height = 1429.086  # Altura de referencia de tu archivo .obj
+
+            # Altura que DEBE tener el volcán (Cima - Base)
+            target_relief = self.height_msnm - self.height
+
+            # Factor de compresión Z
+            # En tu caso: 660 / 1429.086 = 0.4618...
+            z_factor = target_relief / volcano_model_height
+
+            # Aplicamos escala normal en X/Y, y comprimida en Z
+            scale = (2000, 2000*z_factor+100, 2000)
+
+        # 2. Cargar Mesh
         mesh = trimesh.load(obj_path)
         if not isinstance(mesh, trimesh.Trimesh):
             mesh = mesh.dump(concatenate=True)
@@ -38,8 +57,11 @@ class Volcano:
         vertices = mesh.vertices.copy()
         faces = mesh.faces
 
-        # ---- TRANSFORMACIONES ----
-        vertices *= scale
+        # 3. Aplicar Transformación
+        # Si scale era None, ahora es (1.0, 1.0, 0.46...), así que funcionará
+        vertices = vertices * scale
+
+        # ... (resto del código de rotación y traslación igual) ...
         rx, ry, rz = np.radians(rotate_deg)
         Rx = np.array([[1, 0, 0], [0, np.cos(rx), -np.sin(rx)], [0, np.sin(rx), np.cos(rx)]])
         Ry = np.array([[np.cos(ry), 0, np.sin(ry)], [0, 1, 0], [-np.sin(ry), 0, np.cos(ry)]])
@@ -83,6 +105,12 @@ class Volcano:
         poly.set_edgecolor((0, 0, 0, 0))
         ax.add_collection3d(poly)
 
+        # Validación visual en consola
+        z_max_actual = np.max(vertices[:, 2])
+        print(f"Volcán: {self.name}")
+        print(f" - Altura Base (Translate Z): {translate[2]}")
+        print(f" - Altura Cima Real (Target): {self.height_msnm}")
+        print(f" - Altura Máxima en Gráfica: {z_max_actual}")
         return vertices
 
 
@@ -116,7 +144,7 @@ class VolcanoManager:
 
 #////////////////////////////////////////////////////////////////////////////////////
 #Objeto proyectil dependiente del volcan, crea trayectorias y las puede graficar.
-class Proyectil:
+class ProyectilManager:
 
     def __init__(self, volcano: Volcano, range_min, range_max) ->None: #Otorga caracteristicas iniciales
         self.volcano = volcano
@@ -173,19 +201,19 @@ class Proyectil:
         self.save_endpoints(final_points)
 
     def save_euler(self, data, name):
-        folder = os.path.join("../Data", "Trayectory_Data", f"{self.volcano.name}Euler_{self.timestamp}")
+        folder = os.path.join("./Data", "Trayectory_Data", f"{self.volcano.name}Euler_{self.timestamp}")
         os.makedirs(folder, exist_ok=True)
         df = pd.DataFrame(data)
         df.to_csv(os.path.join(folder, name), index=False)
 
     def save_rk4(self, data, name):
-        folder = os.path.join("../Data", "Trayectory_Data", f"{self.volcano.name}RK4_{self.timestamp}")
+        folder = os.path.join("./Data", "Trayectory_Data", f"{self.volcano.name}RK4_{self.timestamp}")
         os.makedirs(folder, exist_ok=True)
         df = pd.DataFrame(data)
         df.to_csv(os.path.join(folder, name), index=False)
 
     def save_endpoints(self, data):
-        folder = os.path.join("../Data", "Endpoints_Data", f"{self.volcano.name}Endpoints_{self.timestamp}")
+        folder = os.path.join("./Data", "Endpoints_Data", f"{self.volcano.name}Endpoints_{self.timestamp}")
         os.makedirs(folder, exist_ok=True)
         df = pd.DataFrame(data)
         path = os.path.join(folder, f"{self.volcano.index}_Endpoints_Data.csv")
