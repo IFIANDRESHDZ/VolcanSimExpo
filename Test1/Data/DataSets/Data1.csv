@@ -1,0 +1,15 @@
+index,name,location,height,latitude,humidity,temp_cima,temp_interior,height_msnm
+1,Popocatepetl,Puebla / Morelos / Edomex,3218,19,68%,-2,950,5426
+2,Volcan de Colima,Colima / Jalisco,3300,20,72%,4,1000,3960
+3,El Chichon,Chiapas,455,17.36,80%,21,800,1205
+4,Ceboruco,Nayarit,1190,21,70%,16,950,2280
+5,Tacana,Chiapas,2920,15,82%,3,950,4092
+6,San Martin Tuxtla,Veracruz,1380,19,78%,21,1125,1680
+7,Evermann,Colima (Islas Revillagigedo),1130,19,75%,21,1025,1320
+8,Las Tres Virgenes,Baja California Sur,1820,27,60%,19,950,1954
+9,Chichinautzin,Morelos / CDMX,650,19.3,74%,25,1050,3930
+10,Sanganguey,Nayarit,1440,21,70%,9,950,2340
+11,Paricutin,Michoacan,863,19,66%,21,1100,2800
+12,Jorullo,Michoacan,730,19,65%,21,1100,1330
+13,Pico de Orizaba,Veracruz / Puebla,4406,19.03,77%,-3,950,5636
+14,Xitle,Ciudad de M�xico,700,19,64%,21,1100,3100
