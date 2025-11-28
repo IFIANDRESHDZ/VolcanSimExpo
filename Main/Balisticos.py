@@ -68,7 +68,7 @@ class Balistico:
         return cd
 
     def get_data(self):
-
+        print("---------------------------------------------------------")
         if self.random_shape:
             ca = self.use_random_shape()
         else:
@@ -90,12 +90,12 @@ class Balistico:
         }
 
     def save_euler(self, data, name):
-        folder = os.path.join("../Data", "Trayectory_Data", f"{self.volcano.name}Euler_{self.volcano.timestamp}")
+        folder = os.path.join("./Data", "Trayectory_Data", f"{self.volcano.name}Euler_{self.volcano.timestamp}")
         os.makedirs(folder, exist_ok=True)
         data.to_csv(os.path.join(folder, name), index=False)
 
     def save_rk4(self, data, name):
-        folder = os.path.join("../Data", "Trayectory_Data", f"{self.volcano.name}RK4_{self.volcano.timestamp}")
+        folder = os.path.join("./Data", "Trayectory_Data", f"{self.volcano.name}RK4_{self.volcano.timestamp}")
         os.makedirs(folder, exist_ok=True)
         data.to_csv(os.path.join(folder, name), index=False)
 
@@ -196,7 +196,6 @@ class Balistico:
 
         h = max(z - self.volcano.height, self.roughtness)
         h_ref = max(self.volcano.height_msnm - self.volcano.height, self.roughtness)
-
         scaling_factor = np.log(h / self.roughtness) / np.log(h_ref / self.roughtness)
         if scaling_factor < 0: scaling_factor = 0
         W_mag = self.W_peak * scaling_factor
@@ -204,6 +203,7 @@ class Balistico:
         wx = W_mag * np.cos(wind_rad)
         wy = W_mag * np.sin(wind_rad)
         wz = 0
+        print(f"Wind: {W_mag} -     Height: {z}")
         return wx, wy, wz
 
     def rho(self, h):

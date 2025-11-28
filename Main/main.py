@@ -21,7 +21,7 @@ class VolcanoApp:
         self.camera_free_var = tk.BooleanVar(value=False)  # Variable for the checkbox
 
         # Cargar volcanes desde CSV
-        self.volcano_manager = VolcanoManager("../Data/DataSets/Data1.csv")
+        self.volcano_manager = VolcanoManager("./Data/DataSets/Data1.csv")
         self.volcanes = self.volcano_manager.volcanoes
 
         # --- ATTRIBUTES FOR ARROW ---
@@ -160,7 +160,7 @@ class VolcanoApp:
         self.wind_quiver = self.ax.quiver(0, 0, z_pos, u, v, w,
                                           color='black', length=1.0, normalize=False, linewidth=1.5,
                                           arrow_length_ratio=0.2)
-        self.wind_text_3d = self.ax.text(u, v, z_pos, f" Wind: {speed:.1f} m/s", color='darkgray', fontweight='bold')
+        self.wind_text_3d = self.ax.text(u, v, z_pos, f" Viento: {speed:.1f} m/s", color='darkgray', fontweight='bold')
 
     def seleccionar_metodo(self, metodo):
         self.metodo_actual = metodo
@@ -198,9 +198,9 @@ class VolcanoApp:
             return
         index = self.volcanes.index(volcano)
         if self.metodo_actual == 'euler':
-            archivo = f"../Data/risk_maps/euler_maps/risk_map {index + 1}.png"
+            archivo = f"./Data/risk_maps/euler_maps/risk_map {index + 1}.png"
         else:
-            archivo = f"../Data/risk_maps/rk4_maps/risk_map_rk4 {index + 1}.png"
+            archivo = f"./Data/risk_maps/rk4_maps/risk_map_rk4 {index + 1}.png"
         try:
             img = Image.open(archivo)
             img = img.resize((400, 350))  # Adjusted size to fit left panel
@@ -258,7 +258,7 @@ class VolcanoApp:
         # Plot volcano model
         volcano.plot_obj_on_axes(
             self.ax,
-            r"../Data/Model/volcano4.obj",
+            r"./Data/Model/volcano4.obj",
             rotate_deg=(90, 0, 180),
             translate=(0, 0, volcano.height),
             base_color=np.array([0.5, 0.5, 0.5]),
